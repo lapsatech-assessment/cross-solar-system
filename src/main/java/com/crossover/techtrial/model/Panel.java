@@ -1,13 +1,20 @@
 package com.crossover.techtrial.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.lang.Nullable;
 
 /**
@@ -20,25 +27,49 @@ import org.springframework.lang.Nullable;
 @Table(name = "panel")
 public class Panel implements Serializable {
 
-  private static final long serialVersionUID = -8527695980909864257L;
+  private static final long serialVersionUID = -8755580144497437564L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Long id;
 
   @NotNull
-  @Column(name = "serial")
+  @Size(min = 16, max = 16, message = "Serial number must be 16 characters length")
+  @Column(name = "serial", unique = true)
   String serial;
 
+  @NotNull
   @Column(name = "longitude")
-  Double longitude;
+  @Digits(integer = 3, fraction = 6, message = "Latitude/longitude must contains 6 decimal places")
+  @DecimalMax(value = "180", message = "Invalid longitude range")
+  @DecimalMin(value = "-180", message = "Invalid longitude range")
+  BigDecimal longitude;
 
+  @NotNull
   @Column(name = "latitude")
-  Double latitude;
+  @Digits(integer = 2, fraction = 6, message = "Latitude/longitude must contains 6 decimal places")
+  @DecimalMax(value = "90", message = "Invalid latitude range")
+  @DecimalMin(value = "-90", message = "Invalid latitude range")
+  BigDecimal latitude;
 
   @Nullable
   @Column(name = "brand")
   String brand;
+
+  public Panel() {
+  }
+
+  public Panel(String serial, BigDecimal longitude, BigDecimal latitude, String brand) {
+    this.serial = serial;
+    this.longitude = longitude;
+    this.latitude = latitude;
+    this.brand = brand;
+  }
+
+  public Panel(Long id, String serial, BigDecimal longitude, BigDecimal latitude, String brand) {
+    this(serial, longitude, latitude, brand);
+    this.id = id;
+  }
 
   public Long getId() {
     return id;
@@ -56,19 +87,19 @@ public class Panel implements Serializable {
     this.serial = serial;
   }
 
-  public Double getLongitude() {
+  public BigDecimal getLongitude() {
     return longitude;
   }
 
-  public void setLongitude(Double longitude) {
+  public void setLongitude(BigDecimal longitude) {
     this.longitude = longitude;
   }
 
-  public Double getLatitude() {
+  public BigDecimal getLatitude() {
     return latitude;
   }
 
-  public void setLatitude(Double latitude) {
+  public void setLatitude(BigDecimal latitude) {
     this.latitude = latitude;
   }
 
@@ -114,21 +145,21 @@ public class Panel implements Serializable {
     Panel other = (Panel) obj;
     if (brand == null) {
       if (other.brand != null) {
-        return false;
+	return false;
       }
     } else if (!brand.equals(other.brand)) {
       return false;
     }
     if (id == null) {
       if (other.id != null) {
-        return false;
+	return false;
       }
     } else if (!id.equals(other.id)) {
       return false;
     }
     if (serial == null) {
       if (other.serial != null) {
-        return false;
+	return false;
       }
     } else if (!serial.equals(other.serial)) {
       return false;
@@ -136,12 +167,14 @@ public class Panel implements Serializable {
     return true;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see java.lang.Object#toString()
    */
   @Override
   public String toString() {
     return "Panel [id=" + id + ", serial=" + serial + ", longitude=" + longitude + ", latitude="
-        + latitude + ", brand=" + brand + "]";
+	+ latitude + ", brand=" + brand + "]";
   }
 }

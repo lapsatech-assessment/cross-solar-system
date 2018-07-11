@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<changeSet id="1.1/panel-update" author="vadim.isaev">
+		<addNotNullConstraint tableName="panel"
+			columnName="longitude" columnDataType="DOUBLE(9,6)" />
+		<addNotNullConstraint tableName="panel"
+			columnName="latitude" columnDataType="DOUBLE(9,6)" />
+		<addNotNullConstraint tableName="panel"
+			columnName="serial" columnDataType="VARCHAR(16)" />
+		<addUniqueConstraint tableName="panel"
+			columnNames="serial" />
+	</changeSet>
+
+	<changeSet id="1.1/hourly-electricity-update"
+		author="vadim.isaev">
+
+		<!-- if we actually don't know which panel the readings belongs to, so 
+			that useless data could be cleared or it might be joined to 'default' panel. 
+			Clarification needed -->
+		<delete tableName="hourly_electricity">
+			<where>panel_id IS NULL</where>
+		</delete>
+
+		<addNotNullConstraint
+			tableName="hourly_electricity" columnName="panel_id"
+			columnDataType="BIGINT" />
+
+		<addForeignKeyConstraint
+			constraintName="fk_hourly_electricity_panel"
+			baseTableName="hourly_electricity" baseColumnNames="panel_id"
+			referencedTableName="panel" referencedColumnNames="id" />
+
+		<addNotNullConstraint
+			tableName="hourly_electricity" columnName="generated_electricity"
+			columnDataType="BIGINT" />
+
+		<addNotNullConstraint
+			tableName="hourly_electricity" columnName="reading_at"
+			columnDataType="DATETIME" />
+
+	</changeSet>
+
+</databaseChangeLog>
