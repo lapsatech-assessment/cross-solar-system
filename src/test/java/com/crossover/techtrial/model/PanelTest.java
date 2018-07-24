@@ -11,10 +11,9 @@ public class PanelTest {
   @Test
   public void publicNoargsConstructorTest() {
     try {
-      Panel.class.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      Panel.class.getConstructor();
+    } catch (NoSuchMethodException e) {
       fail("Public no-args constructor is required");
-      return;
     }
   }
 

@@ -11,10 +11,9 @@ public class HourlyElectricityTest {
   @Test
   public void publicNoargsConstructorTest() {
     try {
-      HourlyElectricity.class.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      HourlyElectricity.class.getConstructor();
+    } catch (NoSuchMethodException e) {
       fail("Public no-args constructor is required");
-      return;
     }
   }
 
